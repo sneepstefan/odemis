@@ -374,7 +374,8 @@ class TestSEM6Axes(unittest.TestCase):
         Test if moving with an inverted axis works like expected
         """
         # shift the stage in Rz position for 8°
-        current_pos = self.stage.position.value.copy()
+        start_pos = self.stage.position.value.copy()
+        current_pos = start_pos
         shift = {"rz": math.radians(8)}
         expected_pos = {key: current_pos[key] + shift.get(key, 0) for key in current_pos}
 
@@ -419,7 +420,7 @@ class TestSEM6Axes(unittest.TestCase):
         self.assertNotEqual(self.stage.position.value, current_pos)
 
         # go back to the original starting point
-        f = self.stage.moveRel({"rz": math.radians(2), "m": -50e-6})
+        f = self.stage.moveRel(start_pos)
         f.result()
 
     def test_move_axes_absolute(self):
@@ -427,26 +428,27 @@ class TestSEM6Axes(unittest.TestCase):
         Test if it's possible to execute an absolute move of the stage using 6 axes
         Test if moving out of the minimal and maximum range of an axis raises a ValueError
         """
-        # move the stage in Rx position for 9°
-        pos = {"rx": math.radians(9)}
+        # move the stage in Rx position for 4°
         start_pos = self.stage.position.value.copy()
-        start_pos["rx"] = math.radians(9)
+        current_pos = start_pos
+        pos = {"rx": math.radians(4)}
+        current_pos["rx"] = math.radians(4)
 
         f = self.stage.moveAbs(pos)
         f.result()
 
         # test if the stage position is almost equal to the newly requested position
-        testing.assert_pos_almost_equal(self.stage.position.value, start_pos, atol=1e-3)
+        testing.assert_pos_almost_equal(self.stage.position.value, current_pos, atol=1e-3)
 
         # move the stage in Rx position with a small value added
-        pos = {"rx": math.radians(9.1)}  # move only 0.1 degree forward
-        start_pos = self.stage.position.value.copy()
+        pos = {"rx": math.radians(4.1)}  # move only 0.1 degree forward
+        current_pos = self.stage.position.value.copy()
 
         f = self.stage.moveAbs(pos)
         f.result()
 
         # test if the stage position moved away from the start position
-        testing.assert_pos_not_almost_equal(self.stage.position.value, start_pos, atol=1e-3)
+        testing.assert_pos_not_almost_equal(self.stage.position.value, current_pos, atol=1e-3)
 
         same_pos = self.stage.position.value.copy()
 
@@ -466,7 +468,7 @@ class TestSEM6Axes(unittest.TestCase):
             self.stage.moveAbsSync({"m": 15.e-3})
 
         # go back to the original starting point
-        f = self.stage.moveAbs({"rx": 0.0})
+        f = self.stage.moveAbs(start_pos)
         f.result()
 
     def test_stop(self):
