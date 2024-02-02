@@ -297,6 +297,10 @@ class Stream(object):
         return self._emitter
 
     @property
+    def pwr_control(self):
+        return self._pwr_control
+
+    @property
     def detector(self):
         return self._detector
 

@@ -130,8 +130,11 @@ class StreamController(object):
         if hasattr(stream, "power"):
             va = self.stream.power
             name = "power"
-            if self.stream.emitter:
-                hw_settings = self.tab_data_model.main.hw_settings_config
+            hw_settings = self.tab_data_model.main.hw_settings_config
+            # first check for a pwr_control
+            if self.stream.pwr_control:
+                emitter_conf = get_hw_config(self.stream.pwr_control, hw_settings)
+            elif self.stream.emitter:
                 emitter_conf = get_hw_config(self.stream.emitter, hw_settings)
             else:
                 emitter_conf = {}
@@ -141,7 +144,11 @@ class StreamController(object):
                 logging.debug("%s emitter configuration found for %s", name,
                               self.stream.emitter.role)
 
-            self.add_setting_entry(name, va, self.stream.emitter, conf)
+            if self.stream.pwr_control:
+                # will return the entry
+                self.add_setting_entry(name, va, self.stream.pwr_control, conf)
+            elif self.stream.emitter:
+                self.add_setting_entry(name, va, self.stream.emitter, conf)
 
         # Add local hardware settings to the stream panel
         self._add_hw_setting_controls()
