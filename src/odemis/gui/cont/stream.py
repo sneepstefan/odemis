@@ -131,9 +131,9 @@ class StreamController(object):
             va = self.stream.power
             name = "power"
             hw_settings = self.tab_data_model.main.hw_settings_config
-            # first check for a pwr_control
-            if self.stream.pwr_control:
-                emitter_conf = get_hw_config(self.stream.pwr_control, hw_settings)
+            # first check for a light component
+            if self.stream.light:
+                emitter_conf = get_hw_config(self.stream.light, hw_settings)
             elif self.stream.emitter:
                 emitter_conf = get_hw_config(self.stream.emitter, hw_settings)
             else:
@@ -144,9 +144,9 @@ class StreamController(object):
                 logging.debug("%s emitter configuration found for %s", name,
                               self.stream.emitter.role)
 
-            if self.stream.pwr_control:
+            if self.stream.light:
                 # will return the entry
-                self.add_setting_entry(name, va, self.stream.pwr_control, conf)
+                self.add_setting_entry(name, va, self.stream.light, conf)
             elif self.stream.emitter:
                 self.add_setting_entry(name, va, self.stream.emitter, conf)
 

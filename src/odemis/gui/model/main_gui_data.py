@@ -140,7 +140,8 @@ class MainGUIData(object):
         "det-rotator": "det_rotator",
         "se-detector-ion": "ion_sed",
         "stage-global": "stage_global",
-        "multilight-emitter": "pwr_control",
+        "bsd-interlock": "bsd_interlock",
+        "light-interlock": "light_interlock",
     }
 
     def __init__(self, microscope):
@@ -221,7 +222,10 @@ class MainGUIData(object):
         self.det_rotator = None  # detector rotator of the fastem microscope
         self.ion_sed = None  # detector for the ions of a composited detector component
         self.stage_global = None  # stage with coordinates converted into a global coordinate system
-        self.pwr_control = None  # MCC DAQ device in the role of a multilight-emitter
+
+        # List of interlocks
+        self.bsd_interlock = None
+        self.light_interlock = None
 
         # Lists of detectors
         self.ccds = []  # All the cameras which could be used for AR (SPARC)
