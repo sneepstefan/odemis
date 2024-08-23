@@ -2405,7 +2405,7 @@ class SEMMDStream(MultipleDetectorStream):
                     raise ValueError("Failed to configure emitter resolution to %s, got %s" %
                                      ((n_x, n_y), em_res))
 
-                # Update the resolution of the "independent" detectors
+                # Update the resolution and the repetition of the "independent" detectors
                 for s in self._streams:
                     det = s._detector
                     if model.hasVA(det, "resolution"):
@@ -2414,7 +2414,17 @@ class SEMMDStream(MultipleDetectorStream):
                             logging.warning("Failed to set the resolution of %s to %s s: %s s accepted",
                                             det.name, (n_x, n_y), det.resolution.value)
                         else:
-                            logging.debug("Set resolution of independent detector %s to %s", det.name, (n_x, n_y))
+                            logging.debug("Set resolution of independent detector %s to %s",
+                                          det.name, (n_x, n_y))
+
+                    if model.hasVA(det, "repetition"):
+                        det.repetition.value = (rep[0], rep[1])
+                        if det.repetition.value != (rep[0], rep[1]):
+                            logging.warning("Failed to set the repetition of %s to %s s: %s s accepted",
+                                            det.name, (rep[0], rep[1]), det.repetition.value)
+                        else:
+                            logging.debug("Set repetition of independent detector %s to %s",
+                                          det.name, (rep[0], rep[1]))
 
                 # Move the beam to the center of the sub-frame
                 trans = tuple(pos_flat[spots_sum:(spots_sum + npixels2scan)].mean(axis=0))
